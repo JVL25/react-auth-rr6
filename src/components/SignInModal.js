@@ -2,9 +2,9 @@ import React, {useContext, useRef, useState} from "react";
 import {UserContext} from "../context/UserContext";
 import {useNavigate} from "react-router-dom";
 
-export default function SignupModal() {
+export default function SignInModal() {
 
-    const {modalState, toggleModals, signUp} = useContext(UserContext);
+    const {modalState, toggleModals, signIn} = useContext(UserContext);
 
     const inputs = useRef([]);
 
@@ -23,19 +23,9 @@ export default function SignupModal() {
     const handleForm = async event => {
         event.preventDefault();
 
-        if ((inputs.current[1].value.length || inputs.current[2].value.length) < 6) {
-            setValidation("6 characters minimum");
-            return;
-        }
-
-        else if(inputs.current[1].value !== inputs.current[2].value) {
-            setValidation("Password doesn't match");
-            return;
-        }
-
         try {
 
-            const cred = await signUp(
+            const cred = await signIn(
                 inputs.current[0].value,
                 inputs.current[1].value
             )
@@ -44,14 +34,7 @@ export default function SignupModal() {
             setValidation('');
             navigate('/private/private-home/')
         } catch (error) {
-
-            if (error.code === "auth/invalid-email") {
-                setValidation("Invalid email");
-            }
-
-            if (error.code === "auth/email-already-in-use") {
-                setValidation("User already exist");
-            }
+            setValidation("Incorrect data verify them and retry")
         }
     }
 
@@ -62,7 +45,7 @@ export default function SignupModal() {
 
     return (
         <>
-            {modalState.signUpModal && (
+            {modalState.signInModal && (
                 <div className="position-fixed top-0 vw-100 vh-100">
                     <div
                         onClick={closeModal}
@@ -89,7 +72,7 @@ export default function SignupModal() {
                                     >
                                         <div className={'mb-3'}>
                                             <label
-                                                htmlFor="signUpEmail"
+                                                htmlFor="signInEmail"
                                                 className="form-label"
                                             >
                                                 Email address
@@ -98,14 +81,14 @@ export default function SignupModal() {
                                                 name="email"
                                                 type="email"
                                                 className="form-control"
-                                                id="signUpEmail"
+                                                id="signInEmail"
                                                 ref={addInputs}
                                                 required
                                             />
                                         </div>
                                         <div className={'mb-3'}>
                                             <label
-                                                htmlFor="signUpPwd"
+                                                htmlFor="signInPwd"
                                                 className="form-label"
                                             >
                                                 Password
@@ -114,23 +97,7 @@ export default function SignupModal() {
                                                 name="pwd"
                                                 type="password"
                                                 className="form-control"
-                                                id="signUpPwd"
-                                                ref={addInputs}
-                                                required
-                                            />
-                                        </div>
-                                        <div className={'mb-3'}>
-                                            <label
-                                                htmlFor="confirmPwd"
-                                                className="form-label"
-                                            >
-                                                Confirm password
-                                            </label>
-                                            <input
-                                                name="pwd"
-                                                type="password"
-                                                className="form-control"
-                                                id="signUpPwd"
+                                                id="signInPwd"
                                                 ref={addInputs}
                                                 required
                                             />
@@ -140,7 +107,6 @@ export default function SignupModal() {
                                                 {validation}
                                             </p>
                                         </div>
-
                                         <button
                                             className="btn btn-primary"
                                         >
